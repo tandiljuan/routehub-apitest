@@ -64,12 +64,13 @@ Prefer: example=vehicle-1.0
   "category_type": "PICKUP",
   "engine_type": "DIESEL"
 }
-HTTP 200
+HTTP 201
 [Captures]
 vehicle_id: jsonpath "$.id"
 [Asserts]
 header "sl-violations" not exists
-jsonpath "$.id" isInteger
+header "location" exists
+jsonpath "$.id" isString
 jsonpath "$.name" == "pickup"
 jsonpath "$.volume" == 1230000
 jsonpath "$.volume_unit" == "CUBIC_CENTIMETER"
@@ -105,14 +106,14 @@ HTTP 200
 [Asserts]
 header "sl-violations" not exists
 jsonpath "$" count > {{ list_count }}
-jsonpath "$[?(@.id == {{ vehicle_id }})]" count == 1
-jsonpath "$[?(@.id == {{ vehicle_id }})].name" nth 0 == "pickup"
-jsonpath "$[?(@.id == {{ vehicle_id }})].volume" nth 0 == 1230000
-jsonpath "$[?(@.id == {{ vehicle_id }})].volume_unit" nth 0 == "CUBIC_CENTIMETER"
-jsonpath "$[?(@.id == {{ vehicle_id }})].consumption" nth 0 == 12
-jsonpath "$[?(@.id == {{ vehicle_id }})].consumption_unit" nth 0 == "LITERS_PER_100KM"
-jsonpath "$[?(@.id == {{ vehicle_id }})].category_type" nth 0 == "PICKUP"
-jsonpath "$[?(@.id == {{ vehicle_id }})].engine_type" nth 0 == "DIESEL"
+jsonpath "$[?(@.id == '{{ vehicle_id }}')]" count == 1
+jsonpath "$[?(@.id == '{{ vehicle_id }}')].name" nth 0 == "pickup"
+jsonpath "$[?(@.id == '{{ vehicle_id }}')].volume" nth 0 == 1230000
+jsonpath "$[?(@.id == '{{ vehicle_id }}')].volume_unit" nth 0 == "CUBIC_CENTIMETER"
+jsonpath "$[?(@.id == '{{ vehicle_id }}')].consumption" nth 0 == 12
+jsonpath "$[?(@.id == '{{ vehicle_id }}')].consumption_unit" nth 0 == "LITERS_PER_100KM"
+jsonpath "$[?(@.id == '{{ vehicle_id }}')].category_type" nth 0 == "PICKUP"
+jsonpath "$[?(@.id == '{{ vehicle_id }}')].engine_type" nth 0 == "DIESEL"
 
 
 #   --------
@@ -141,7 +142,7 @@ Prefer: example=vehicle-1.0
 HTTP 200
 [Asserts]
 header "sl-violations" not exists
-jsonpath "$.id" == {{ vehicle_id }}
+jsonpath "$.id" == "{{ vehicle_id }}"
 jsonpath "$.name" == "pickup"
 jsonpath "$.volume" == 1230000
 jsonpath "$.volume_unit" == "CUBIC_CENTIMETER"
@@ -184,7 +185,7 @@ Prefer: example=vehicle-1.1
 HTTP 200
 [Asserts]
 header "sl-violations" not exists
-jsonpath "$.id" == {{ vehicle_id }}
+jsonpath "$.id" == "{{ vehicle_id }}"
 jsonpath "$.name" == "pickup-update"
 jsonpath "$.volume" == 1230000
 jsonpath "$.volume_unit" == "CUBIC_CENTIMETER"
@@ -219,14 +220,14 @@ HTTP 200
 [Asserts]
 header "sl-violations" not exists
 jsonpath "$" count > {{ list_count }}
-jsonpath "$[?(@.id == {{ vehicle_id }})]" count == 1
-jsonpath "$[?(@.id == {{ vehicle_id }})].name" nth 0 == "pickup-update"
-jsonpath "$[?(@.id == {{ vehicle_id }})].volume" nth 0 == 1230000
-jsonpath "$[?(@.id == {{ vehicle_id }})].volume_unit" nth 0 == "CUBIC_CENTIMETER"
-jsonpath "$[?(@.id == {{ vehicle_id }})].consumption" nth 0 == 10
-jsonpath "$[?(@.id == {{ vehicle_id }})].consumption_unit" nth 0 == "LITERS_PER_100KM"
-jsonpath "$[?(@.id == {{ vehicle_id }})].category_type" nth 0 == "PICKUP"
-jsonpath "$[?(@.id == {{ vehicle_id }})].engine_type" nth 0 == "DIESEL"
+jsonpath "$[?(@.id == '{{ vehicle_id }}')]" count == 1
+jsonpath "$[?(@.id == '{{ vehicle_id }}')].name" nth 0 == "pickup-update"
+jsonpath "$[?(@.id == '{{ vehicle_id }}')].volume" nth 0 == 1230000
+jsonpath "$[?(@.id == '{{ vehicle_id }}')].volume_unit" nth 0 == "CUBIC_CENTIMETER"
+jsonpath "$[?(@.id == '{{ vehicle_id }}')].consumption" nth 0 == 10
+jsonpath "$[?(@.id == '{{ vehicle_id }}')].consumption_unit" nth 0 == "LITERS_PER_100KM"
+jsonpath "$[?(@.id == '{{ vehicle_id }}')].category_type" nth 0 == "PICKUP"
+jsonpath "$[?(@.id == '{{ vehicle_id }}')].engine_type" nth 0 == "DIESEL"
 
 
 #   --------
@@ -255,7 +256,7 @@ Prefer: example=vehicle-1.1
 HTTP 200
 [Asserts]
 header "sl-violations" not exists
-jsonpath "$.id" == {{ vehicle_id }}
+jsonpath "$.id" == "{{ vehicle_id }}"
 jsonpath "$.name" == "pickup-update"
 jsonpath "$.volume" == 1230000
 jsonpath "$.volume_unit" == "CUBIC_CENTIMETER"
@@ -299,7 +300,7 @@ HTTP 200
 [Asserts]
 header "sl-violations" not exists
 jsonpath "$" count == {{ list_count }}
-jsonpath "$[?(@.id == {{ vehicle_id }})]" count == 0
+jsonpath "$[?(@.id == '{{ vehicle_id }}')]" count == 0
 
 
 #   --------
