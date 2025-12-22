@@ -4,6 +4,46 @@
 #   Background:
 #     Given the API is available in a given host
 #     And the user is authenticated
+#     And the vehicle #1 is created with the following data:
+#       | field            | value              |
+#       | name             | "truck"            |
+#       | category_type    | "TRUCK"            |
+#       | engine_type      | "DIESEL"           |
+#     And the vehicle #2 is created with the following data:
+#       | field            | value              |
+#       | name             | "van"              |
+#       | category_type    | "VAN"              |
+#       | engine_type      | "DIESEL"           |
+
+POST {{ host }}/vehicles
+authorization: Bearer {{ auth }}
+Accept: application/json
+x-fake-api: vehiclesCRUD
+x-fake-step: vehiclesCreate0
+Prefer: example=vehicle-2.0
+{
+  "name": "truck",
+  "category_type": "TRUCK",
+  "engine_type": "DIESEL"
+}
+HTTP 201
+[Captures]
+vehicle01_id: jsonpath "$.id"
+
+POST {{ host }}/vehicles
+authorization: Bearer {{ auth }}
+Accept: application/json
+x-fake-api: vehiclesCRUD
+x-fake-step: vehiclesCreate0
+Prefer: example=vehicle-3.0
+{
+  "name": "van",
+  "category_type": "VAN",
+  "engine_type": "DIESEL"
+}
+HTTP 201
+[Captures]
+vehicle02_id: jsonpath "$.id"
 
 
 #   --------
@@ -29,15 +69,15 @@ variable "list_count" >= 0
 #   --------
 #   Scenario: Create a new Fleet
 #     When a POST request is send to "/fleets" with the following data:
-#       | field            | value                           |
-#       | name             | "my-fleet"                      |
-#       | vehicles         | [{"vehicle_id":1,"quantity":2}] |
+#       | field            | value                               |
+#       | name             | "my-fleet"                          |
+#       | vehicles         | [{"id":"{{vehicle01_id}}","qty":2}] |
 #     Then the response status should be 200
 #     And the response should contain an object that contains:
-#       | field            | value                           |
-#       | id               | <fleet_id>                      |
-#       | name             | "my-fleet"                      |
-#       | vehicles         | [{"vehicle_id":1,"quantity":2}] |
+#       | field            | value                               |
+#       | id               | <fleet_id>                          |
+#       | name             | "my-fleet"                          |
+#       | vehicles         | [{"id":"{{vehicle01_id}}","qty":2}] |
 
 POST {{ host }}/fleets
 authorization: Bearer {{ auth }}
@@ -47,18 +87,19 @@ x-fake-step: fleetsCreate0
 Prefer: example=fleet-1.0
 {
   "name": "my-fleet",
-  "vehicles": [{"vehicle_id":1,"quantity":2}]
+  "vehicles": [{"id":"{{vehicle01_id}}","qty":2}]
 }
-HTTP 200
+HTTP 201
 [Captures]
 fleet_id: jsonpath "$.id"
 [Asserts]
 header "sl-violations" not exists
-jsonpath "$.id" isInteger
+header "location" exists
+jsonpath "$.id" isString
 jsonpath "$.name" == "my-fleet"
 jsonpath "$.vehicles" count == 1
-jsonpath "$.vehicles[0].vehicle_id" == 1
-jsonpath "$.vehicles[0].quantity" == 2
+jsonpath "$.vehicles[0].id" == "{{vehicle01_id}}"
+jsonpath "$.vehicles[0].qty" == 2
 
 
 #   --------
@@ -67,10 +108,10 @@ jsonpath "$.vehicles[0].quantity" == 2
 #     Then the response status should be 200
 #     And the response should have one more item
 #     And the response should contain an object that contains:
-#       | field            | value                           |
-#       | id               | <fleet_id>                      |
-#       | name             | "my-fleet"                      |
-#       | vehicles         | [{"vehicle_id":1,"quantity":2}] |
+#       | field            | value                               |
+#       | id               | <fleet_id>                          |
+#       | name             | "my-fleet"                          |
+#       | vehicles         | [{"id":"{{vehicle01_id}}","qty":2}] |
 
 GET {{ host }}/fleets
 authorization: Bearer {{ auth }}
@@ -82,11 +123,11 @@ HTTP 200
 [Asserts]
 header "sl-violations" not exists
 jsonpath "$" count > {{ list_count }}
-jsonpath "$[?(@.id == {{ fleet_id }})]" count == 1
-jsonpath "$[?(@.id == {{ fleet_id }})].name" nth 0 == "my-fleet"
-jsonpath "$[?(@.id == {{ fleet_id }})].vehicles" nth 0 count == 1
-jsonpath "$[?(@.id == {{ fleet_id }})].vehicles[0].vehicle_id" nth 0 == 1
-jsonpath "$[?(@.id == {{ fleet_id }})].vehicles[0].quantity" nth 0 == 2
+jsonpath "$[?(@.id == '{{ fleet_id }}')]" count == 1
+jsonpath "$[?(@.id == '{{ fleet_id }}')].name" nth 0 == "my-fleet"
+jsonpath "$[?(@.id == '{{ fleet_id }}')].vehicles" nth 0 count == 1
+jsonpath "$[?(@.id == '{{ fleet_id }}')].vehicles[0].id" nth 0 == "{{vehicle01_id}}"
+jsonpath "$[?(@.id == '{{ fleet_id }}')].vehicles[0].qty" nth 0 == 2
 
 
 #   --------
@@ -96,10 +137,10 @@ jsonpath "$[?(@.id == {{ fleet_id }})].vehicles[0].quantity" nth 0 == 2
 #     When a GET request is sent to "/fleets/<fleet_id>"
 #     Then the response status should be 200
 #     And the response should contain:
-#       | field            | value                           |
-#       | id               | <fleet_id>                      |
-#       | name             | "my-fleet"                      |
-#       | vehicles         | [{"vehicle_id":1,"quantity":2}] |
+#       | field            | value                               |
+#       | id               | <fleet_id>                          |
+#       | name             | "my-fleet"                          |
+#       | vehicles         | [{"id":"{{vehicle01_id}}","qty":2}] |
 
 GET {{ host }}/fleets/{{ fleet_id }}
 authorization: Bearer {{ auth }}
@@ -110,11 +151,11 @@ Prefer: example=fleet-1.0
 HTTP 200
 [Asserts]
 header "sl-violations" not exists
-jsonpath "$.id" == {{ fleet_id }}
+jsonpath "$.id" == "{{ fleet_id }}"
 jsonpath "$.name" == "my-fleet"
 jsonpath "$.vehicles" count == 1
-jsonpath "$.vehicles[0].vehicle_id" == 1
-jsonpath "$.vehicles[0].quantity" == 2
+jsonpath "$.vehicles[0].id" == "{{vehicle01_id}}"
+jsonpath "$.vehicles[0].qty" == 2
 
 
 #   --------
@@ -122,15 +163,15 @@ jsonpath "$.vehicles[0].quantity" == 2
 #     Given a fleet exist
 #     And the fleet's ID is stored as <fleet_id>
 #     When a PATCH request is sent to "/fleets/<fleet_id>" with the following data:
-#       | field            | value                           |
-#       | name             | "my-fleet-update"               |
-#       | vehicles         | [{"vehicle_id":2,"quantity":3}] |
+#       | field            | value                                                                 |
+#       | name             | "my-fleet-update"                                                     |
+#       | vehicles         | [{"id":"{{vehicle01_id}}","qty":0},{"id":"{{vehicle02_id}}","qty":3}] |
 #     Then the response status should be 200
 #     And the response should contain:
-#       | field            | value                           |
-#       | id               | <fleet_id>                      |
-#       | name             | "my-fleet-update"               |
-#       | vehicles         | [{"vehicle_id":2,"quantity":3}] |
+#       | field            | value                               |
+#       | id               | <fleet_id>                          |
+#       | name             | "my-fleet-update"                   |
+#       | vehicles         | [{"id":"{{vehicle02_id}}","qty":3}] |
 
 PATCH {{ host }}/fleets/{{ fleet_id }}
 authorization: Bearer {{ auth }}
@@ -140,16 +181,16 @@ x-fake-step: fleetsUpdateFleet0
 Prefer: example=fleet-1.1
 {
   "name": "my-fleet-update",
-  "vehicles": [{"vehicle_id":2,"quantity":3}]
+  "vehicles": [{"id":"{{vehicle01_id}}","qty":0},{"id":"{{vehicle02_id}}","qty":3}]
 }
 HTTP 200
 [Asserts]
 header "sl-violations" not exists
-jsonpath "$.id" == {{ fleet_id }}
+jsonpath "$.id" == "{{ fleet_id }}"
 jsonpath "$.name" == "my-fleet-update"
 jsonpath "$.vehicles" count == 1
-jsonpath "$.vehicles[0].vehicle_id" == 2
-jsonpath "$.vehicles[0].quantity" == 3
+jsonpath "$.vehicles[0].id" == "{{vehicle02_id}}"
+jsonpath "$.vehicles[0].qty" == 3
 
 
 #   --------
@@ -157,10 +198,10 @@ jsonpath "$.vehicles[0].quantity" == 3
 #     When a GET request is send to "/fleets"
 #     Then the response status should be 200
 #     And the response should contain an object that contains:
-#       | field            | value                           |
-#       | id               | <fleet_id>                      |
-#       | name             | "my-fleet-update"               |
-#       | vehicles         | [{"vehicle_id":2,"quantity":3}] |
+#       | field            | value                               |
+#       | id               | <fleet_id>                          |
+#       | name             | "my-fleet-update"                   |
+#       | vehicles         | [{"id":"{{vehicle02_id}}","qty":3}] |
 
 GET {{ host }}/fleets
 authorization: Bearer {{ auth }}
@@ -172,11 +213,11 @@ HTTP 200
 [Asserts]
 header "sl-violations" not exists
 jsonpath "$" count > {{ list_count }}
-jsonpath "$[?(@.id == {{ fleet_id }})]" count == 1
-jsonpath "$[?(@.id == {{ fleet_id }})].name" nth 0 == "my-fleet-update"
-jsonpath "$[?(@.id == {{ fleet_id }})].vehicles" nth 0 count == 1
-jsonpath "$[?(@.id == {{ fleet_id }})].vehicles[0].vehicle_id" nth 0 == 2
-jsonpath "$[?(@.id == {{ fleet_id }})].vehicles[0].quantity" nth 0 == 3
+jsonpath "$[?(@.id == '{{ fleet_id }}')]" count == 1
+jsonpath "$[?(@.id == '{{ fleet_id }}')].name" nth 0 == "my-fleet-update"
+jsonpath "$[?(@.id == '{{ fleet_id }}')].vehicles" nth 0 count == 1
+jsonpath "$[?(@.id == '{{ fleet_id }}')].vehicles[0].id" nth 0 == "{{vehicle02_id}}"
+jsonpath "$[?(@.id == '{{ fleet_id }}')].vehicles[0].qty" nth 0 == 3
 
 
 #   --------
@@ -186,10 +227,10 @@ jsonpath "$[?(@.id == {{ fleet_id }})].vehicles[0].quantity" nth 0 == 3
 #     When a GET request is sent to "/fleets/<fleet_id>"
 #     Then the response status should be 200
 #     And the response should contain:
-#       | field            | value                           |
-#       | id               | <fleet_id>                      |
-#       | name             | "my-fleet-update"               |
-#       | vehicles         | [{"vehicle_id":2,"quantity":3}] |
+#       | field            | value                               |
+#       | id               | <fleet_id>                          |
+#       | name             | "my-fleet-update"                   |
+#       | vehicles         | [{"id":"{{vehicle02_id}}","qty":3}] |
 
 GET {{ host }}/fleets/{{ fleet_id }}
 authorization: Bearer {{ auth }}
@@ -200,11 +241,11 @@ Prefer: example=fleet-1.1
 HTTP 200
 [Asserts]
 header "sl-violations" not exists
-jsonpath "$.id" == {{ fleet_id }}
+jsonpath "$.id" == "{{ fleet_id }}"
 jsonpath "$.name" == "my-fleet-update"
 jsonpath "$.vehicles" count == 1
-jsonpath "$.vehicles[0].vehicle_id" == 2
-jsonpath "$.vehicles[0].quantity" == 3
+jsonpath "$.vehicles[0].id" == "{{vehicle02_id}}"
+jsonpath "$.vehicles[0].qty" == 3
 
 
 #   --------
@@ -241,7 +282,7 @@ HTTP 200
 [Asserts]
 header "sl-violations" not exists
 jsonpath "$" count == {{ list_count }}
-jsonpath "$[?(@.id == {{ fleet_id }})]" count == 0
+jsonpath "$[?(@.id == '{{ fleet_id }}')]" count == 0
 
 
 #   --------
@@ -258,3 +299,17 @@ x-fake-api: fleetsCRUD
 x-fake-step: fleetsGetFleet2
 Prefer: code=404
 HTTP 404
+
+
+#   --------
+#   Delete Vehicles #1 and #2
+
+DELETE {{ host }}/vehicles/{{ vehicle01_id }}
+authorization: Bearer {{ auth }}
+Accept: application/json
+HTTP 200
+
+DELETE {{ host }}/vehicles/{{ vehicle02_id }}
+authorization: Bearer {{ auth }}
+Accept: application/json
+HTTP 200
