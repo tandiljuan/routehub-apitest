@@ -4,6 +4,31 @@
 #   Background:
 #     Given the API is available in a given host
 #     And the user is authenticated
+#     And the vehicle #1 is created with the following data:
+#       | field            | value              |
+#       | name             | "truck"            |
+#       | category_type    | "TRUCK"            |
+#       | engine_type      | "DIESEL"           |
+#     And the vehicle #2 is created with the following data:
+#       | field            | value              |
+#       | name             | "van"              |
+#       | category_type    | "VAN"              |
+#       | engine_type      | "DIESEL"           |
+
+POST {{ host }}/vehicles
+authorization: Bearer {{ auth }}
+Accept: application/json
+x-fake-api: vehiclesCRUD
+x-fake-step: vehiclesCreate0
+Prefer: example=vehicle-2.0
+{
+  "name": "truck",
+  "category_type": "TRUCK",
+  "engine_type": "DIESEL"
+}
+HTTP 201
+[Captures]
+vehicle01_id: jsonpath "$.id"
 
 
 #   --------
@@ -35,7 +60,7 @@ variable "list_count" >= 0
 #       | work_schedules | ["DTSTART:20250101T120000Z\nDURATION:PT8H\nRRULE:FREQ=DAILY"]     |
 #       | start_point    | "37.7749,-122.4194"                                               |
 #       | work_areas     | [["37.7749,-122.4194", "37.7749,-122.4195", "37.7750,-122.4194"]] |
-#       | vehicles       | [{"vehicle_id":1,"quantity":2}]                                   |
+#       | vehicles       | [{"id":"{{ vehicle01_id }}","qty":2}]                             |
 #     Then the response status should be 200
 #     And the response should contain an object that contains:
 #       | field          | value                                                             |
@@ -45,7 +70,7 @@ variable "list_count" >= 0
 #       | work_schedules | ["DTSTART:20250101T120000Z\nDURATION:PT8H\nRRULE:FREQ=DAILY"]     |
 #       | start_point    | "37.7749,-122.4194"                                               |
 #       | work_areas     | [["37.7749,-122.4194", "37.7749,-122.4195", "37.7750,-122.4194"]] |
-#       | vehicles       | [{"vehicle_id":1,"quantity":2}]                                   |
+#       | vehicles       | [{"id":"{{ vehicle01_id }}","qty":2}]                             |
 
 POST {{ host }}/drivers
 authorization: Bearer {{ auth }}
@@ -59,14 +84,15 @@ Prefer: example=driver-1.0
   "work_schedules": ["DTSTART:20250101T120000Z\nDURATION:PT8H\nRRULE:FREQ=DAILY"],
   "start_point": "37.7749,-122.4194",
   "work_areas": [["37.7749,-122.4194", "37.7749,-122.4195", "37.7750,-122.4194"]],
-  "vehicles": [{"vehicle_id":1,"quantity":2}]
+  "vehicles": [{"id":"{{ vehicle01_id }}","qty":2}]
 }
-HTTP 200
+HTTP 201
 [Captures]
 driver_id: jsonpath "$.id"
 [Asserts]
 header "sl-violations" not exists
-jsonpath "$.id" isInteger
+header "location" exists
+jsonpath "$.id" isString
 jsonpath "$.first_name" == "John"
 jsonpath "$.last_name" == "Doe"
 jsonpath "$.work_schedules" count == 1
@@ -78,8 +104,8 @@ jsonpath "$.work_areas[0][0]" == "37.7749,-122.4194"
 jsonpath "$.work_areas[0][1]" == "37.7749,-122.4195"
 jsonpath "$.work_areas[0][2]" == "37.7750,-122.4194"
 jsonpath "$.vehicles" count == 1
-jsonpath "$.vehicles[0].vehicle_id" == 1
-jsonpath "$.vehicles[0].quantity" == 2
+jsonpath "$.vehicles[0].id" == "{{ vehicle01_id }}"
+jsonpath "$.vehicles[0].qty" == 2
 
 
 #   --------
@@ -95,7 +121,7 @@ jsonpath "$.vehicles[0].quantity" == 2
 #       | work_schedules | ["DTSTART:20250101T120000Z\nDURATION:PT8H\nRRULE:FREQ=DAILY"]     |
 #       | start_point    | "37.7749,-122.4194"                                               |
 #       | work_areas     | [["37.7749,-122.4194", "37.7749,-122.4195", "37.7750,-122.4194"]] |
-#       | vehicles       | [{"vehicle_id":1,"quantity":2}]                                   |
+#       | vehicles       | [{"id":"{{ vehicle01_id }}","qty":2}]                             |
 
 GET {{ host }}/drivers
 authorization: Bearer {{ auth }}
@@ -107,20 +133,20 @@ HTTP 200
 [Asserts]
 header "sl-violations" not exists
 jsonpath "$" count > {{ list_count }}
-jsonpath "$[?(@.id == {{ driver_id }})]" count == 1
-jsonpath "$[?(@.id == {{ driver_id }})].first_name" nth 0 == "John"
-jsonpath "$[?(@.id == {{ driver_id }})].last_name" nth 0 == "Doe"
-jsonpath "$[?(@.id == {{ driver_id }})].work_schedules"  nth 0 count == 1
-jsonpath "$[?(@.id == {{ driver_id }})].work_schedules[0]" nth 0 == "DTSTART:20250101T120000Z\nDURATION:PT8H\nRRULE:FREQ=DAILY"
-jsonpath "$[?(@.id == {{ driver_id }})].start_point" nth 0 == "37.7749,-122.4194"
-jsonpath "$[?(@.id == {{ driver_id }})].work_areas" nth 0 count == 1
-jsonpath "$[?(@.id == {{ driver_id }})].work_areas[0]" nth 0 count == 3
-jsonpath "$[?(@.id == {{ driver_id }})].work_areas[0][0]" nth 0 == "37.7749,-122.4194"
-jsonpath "$[?(@.id == {{ driver_id }})].work_areas[0][1]" nth 0 == "37.7749,-122.4195"
-jsonpath "$[?(@.id == {{ driver_id }})].work_areas[0][2]" nth 0 == "37.7750,-122.4194"
-jsonpath "$[?(@.id == {{ driver_id }})].vehicles" nth 0 count == 1
-jsonpath "$[?(@.id == {{ driver_id }})].vehicles[0].vehicle_id" nth 0 == 1
-jsonpath "$[?(@.id == {{ driver_id }})].vehicles[0].quantity" nth 0 == 2
+jsonpath "$[?(@.id == '{{ driver_id }}')]" count == 1
+jsonpath "$[?(@.id == '{{ driver_id }}')].first_name" nth 0 == "John"
+jsonpath "$[?(@.id == '{{ driver_id }}')].last_name" nth 0 == "Doe"
+jsonpath "$[?(@.id == '{{ driver_id }}')].work_schedules"  nth 0 count == 1
+jsonpath "$[?(@.id == '{{ driver_id }}')].work_schedules[0]" nth 0 == "DTSTART:20250101T120000Z\nDURATION:PT8H\nRRULE:FREQ=DAILY"
+jsonpath "$[?(@.id == '{{ driver_id }}')].start_point" nth 0 == "37.7749,-122.4194"
+jsonpath "$[?(@.id == '{{ driver_id }}')].work_areas" nth 0 count == 1
+jsonpath "$[?(@.id == '{{ driver_id }}')].work_areas[0]" nth 0 count == 3
+jsonpath "$[?(@.id == '{{ driver_id }}')].work_areas[0][0]" nth 0 == "37.7749,-122.4194"
+jsonpath "$[?(@.id == '{{ driver_id }}')].work_areas[0][1]" nth 0 == "37.7749,-122.4195"
+jsonpath "$[?(@.id == '{{ driver_id }}')].work_areas[0][2]" nth 0 == "37.7750,-122.4194"
+jsonpath "$[?(@.id == '{{ driver_id }}')].vehicles" nth 0 count == 1
+jsonpath "$[?(@.id == '{{ driver_id }}')].vehicles[0].id" nth 0 == "{{ vehicle01_id }}"
+jsonpath "$[?(@.id == '{{ driver_id }}')].vehicles[0].qty" nth 0 == 2
 
 
 #   --------
@@ -137,7 +163,7 @@ jsonpath "$[?(@.id == {{ driver_id }})].vehicles[0].quantity" nth 0 == 2
 #       | work_schedules | ["DTSTART:20250101T120000Z\nDURATION:PT8H\nRRULE:FREQ=DAILY"]     |
 #       | start_point    | "37.7749,-122.4194"                                               |
 #       | work_areas     | [["37.7749,-122.4194", "37.7749,-122.4195", "37.7750,-122.4194"]] |
-#       | vehicles       | [{"vehicle_id":1,"quantity":2}]                                   |
+#       | vehicles       | [{"id":"{{ vehicle01_id }}","qty":2}]                             |
 
 GET {{ host }}/drivers/{{ driver_id }}
 authorization: Bearer {{ auth }}
@@ -148,7 +174,7 @@ Prefer: example=driver-1.0
 HTTP 200
 [Asserts]
 header "sl-violations" not exists
-jsonpath "$.id" == {{ driver_id }}
+jsonpath "$.id" == "{{ driver_id }}"
 jsonpath "$.first_name" == "John"
 jsonpath "$.last_name" == "Doe"
 jsonpath "$.work_schedules" count == 1
@@ -160,8 +186,8 @@ jsonpath "$.work_areas[0][0]" == "37.7749,-122.4194"
 jsonpath "$.work_areas[0][1]" == "37.7749,-122.4195"
 jsonpath "$.work_areas[0][2]" == "37.7750,-122.4194"
 jsonpath "$.vehicles" count == 1
-jsonpath "$.vehicles[0].vehicle_id" == 1
-jsonpath "$.vehicles[0].quantity" == 2
+jsonpath "$.vehicles[0].id" == "{{ vehicle01_id }}"
+jsonpath "$.vehicles[0].qty" == 2
 
 
 #   --------
@@ -181,7 +207,7 @@ jsonpath "$.vehicles[0].quantity" == 2
 #       | work_schedules | ["DTSTART:20250101T120000Z\nDURATION:PT8H\nRRULE:FREQ=DAILY"]     |
 #       | start_point    | "37.7749,-122.4194"                                               |
 #       | work_areas     | [["37.7749,-122.4194", "37.7749,-122.4195", "37.7750,-122.4194"]] |
-#       | vehicles       | [{"vehicle_id":1,"quantity":2}]                                   |
+#       | vehicles       | [{"id":"{{ vehicle01_id }}","qty":2}]                             |
 
 PATCH {{ host }}/drivers/{{ driver_id }}
 authorization: Bearer {{ auth }}
@@ -196,7 +222,7 @@ Prefer: example=driver-1.1
 HTTP 200
 [Asserts]
 header "sl-violations" not exists
-jsonpath "$.id" == {{ driver_id }}
+jsonpath "$.id" == "{{ driver_id }}"
 jsonpath "$.first_name" == "Jane"
 jsonpath "$.last_name" == "Smith"
 jsonpath "$.work_schedules" count == 1
@@ -208,8 +234,8 @@ jsonpath "$.work_areas[0][0]" == "37.7749,-122.4194"
 jsonpath "$.work_areas[0][1]" == "37.7749,-122.4195"
 jsonpath "$.work_areas[0][2]" == "37.7750,-122.4194"
 jsonpath "$.vehicles" count == 1
-jsonpath "$.vehicles[0].vehicle_id" == 1
-jsonpath "$.vehicles[0].quantity" == 2
+jsonpath "$.vehicles[0].id" == "{{ vehicle01_id }}"
+jsonpath "$.vehicles[0].qty" == 2
 
 
 #   --------
@@ -224,7 +250,7 @@ jsonpath "$.vehicles[0].quantity" == 2
 #       | work_schedules | ["DTSTART:20250101T120000Z\nDURATION:PT8H\nRRULE:FREQ=DAILY"]     |
 #       | start_point    | "37.7749,-122.4194"                                               |
 #       | work_areas     | [["37.7749,-122.4194", "37.7749,-122.4195", "37.7750,-122.4194"]] |
-#       | vehicles       | [{"vehicle_id":1,"quantity":2}]                                   |
+#       | vehicles       | [{"id":"{{ vehicle01_id }}","qty":2}]                             |
 
 GET {{ host }}/drivers
 authorization: Bearer {{ auth }}
@@ -236,20 +262,20 @@ HTTP 200
 [Asserts]
 header "sl-violations" not exists
 jsonpath "$" count > {{ list_count }}
-jsonpath "$[?(@.id == {{ driver_id }})]" count == 1
-jsonpath "$[?(@.id == {{ driver_id }})].first_name" nth 0 == "Jane"
-jsonpath "$[?(@.id == {{ driver_id }})].last_name" nth 0 == "Smith"
-jsonpath "$[?(@.id == {{ driver_id }})].work_schedules" nth 0 count == 1
-jsonpath "$[?(@.id == {{ driver_id }})].work_schedules[0]" nth 0 == "DTSTART:20250101T120000Z\nDURATION:PT8H\nRRULE:FREQ=DAILY"
-jsonpath "$[?(@.id == {{ driver_id }})].start_point" nth 0 == "37.7749,-122.4194"
-jsonpath "$[?(@.id == {{ driver_id }})].work_areas" nth 0 count == 1
-jsonpath "$[?(@.id == {{ driver_id }})].work_areas[0]" nth 0 count == 3
-jsonpath "$[?(@.id == {{ driver_id }})].work_areas[0][0]" nth 0 == "37.7749,-122.4194"
-jsonpath "$[?(@.id == {{ driver_id }})].work_areas[0][1]" nth 0 == "37.7749,-122.4195"
-jsonpath "$[?(@.id == {{ driver_id }})].work_areas[0][2]" nth 0 == "37.7750,-122.4194"
-jsonpath "$[?(@.id == {{ driver_id }})].vehicles" nth 0 count == 1
-jsonpath "$[?(@.id == {{ driver_id }})].vehicles[0].vehicle_id" nth 0 == 1
-jsonpath "$[?(@.id == {{ driver_id }})].vehicles[0].quantity" nth 0 == 2
+jsonpath "$[?(@.id == '{{ driver_id }}')]" count == 1
+jsonpath "$[?(@.id == '{{ driver_id }}')].first_name" nth 0 == "Jane"
+jsonpath "$[?(@.id == '{{ driver_id }}')].last_name" nth 0 == "Smith"
+jsonpath "$[?(@.id == '{{ driver_id }}')].work_schedules" nth 0 count == 1
+jsonpath "$[?(@.id == '{{ driver_id }}')].work_schedules[0]" nth 0 == "DTSTART:20250101T120000Z\nDURATION:PT8H\nRRULE:FREQ=DAILY"
+jsonpath "$[?(@.id == '{{ driver_id }}')].start_point" nth 0 == "37.7749,-122.4194"
+jsonpath "$[?(@.id == '{{ driver_id }}')].work_areas" nth 0 count == 1
+jsonpath "$[?(@.id == '{{ driver_id }}')].work_areas[0]" nth 0 count == 3
+jsonpath "$[?(@.id == '{{ driver_id }}')].work_areas[0][0]" nth 0 == "37.7749,-122.4194"
+jsonpath "$[?(@.id == '{{ driver_id }}')].work_areas[0][1]" nth 0 == "37.7749,-122.4195"
+jsonpath "$[?(@.id == '{{ driver_id }}')].work_areas[0][2]" nth 0 == "37.7750,-122.4194"
+jsonpath "$[?(@.id == '{{ driver_id }}')].vehicles" nth 0 count == 1
+jsonpath "$[?(@.id == '{{ driver_id }}')].vehicles[0].id" nth 0 == "{{ vehicle01_id }}"
+jsonpath "$[?(@.id == '{{ driver_id }}')].vehicles[0].qty" nth 0 == 2
 
 
 #   --------
@@ -266,7 +292,7 @@ jsonpath "$[?(@.id == {{ driver_id }})].vehicles[0].quantity" nth 0 == 2
 #       | work_schedules | ["DTSTART:20250101T120000Z\nDURATION:PT8H\nRRULE:FREQ=DAILY"]     |
 #       | start_point    | "37.7749,-122.4194"                                               |
 #       | work_areas     | [["37.7749,-122.4194", "37.7749,-122.4195", "37.7750,-122.4194"]] |
-#       | vehicles       | [{"vehicle_id":1,"quantity":2}]                                   |
+#       | vehicles       | [{"id":"{{ vehicle01_id }}","qty":2}]                             |
 
 GET {{ host }}/drivers/{{ driver_id }}
 authorization: Bearer {{ auth }}
@@ -277,7 +303,7 @@ Prefer: example=driver-1.1
 HTTP 200
 [Asserts]
 header "sl-violations" not exists
-jsonpath "$.id" == {{ driver_id }}
+jsonpath "$.id" == "{{ driver_id }}"
 jsonpath "$.first_name" == "Jane"
 jsonpath "$.last_name" == "Smith"
 jsonpath "$.work_schedules" count == 1
@@ -289,8 +315,8 @@ jsonpath "$.work_areas[0][0]" == "37.7749,-122.4194"
 jsonpath "$.work_areas[0][1]" == "37.7749,-122.4195"
 jsonpath "$.work_areas[0][2]" == "37.7750,-122.4194"
 jsonpath "$.vehicles" count == 1
-jsonpath "$.vehicles[0].vehicle_id" == 1
-jsonpath "$.vehicles[0].quantity" == 2
+jsonpath "$.vehicles[0].id" == "{{ vehicle01_id }}"
+jsonpath "$.vehicles[0].qty" == 2
 
 
 #   --------
@@ -327,7 +353,7 @@ HTTP 200
 [Asserts]
 header "sl-violations" not exists
 jsonpath "$" count == {{ list_count }}
-jsonpath "$[?(@.id == {{ driver_id }})]" count == 0
+jsonpath "$[?(@.id == '{{ driver_id }}')]" count == 0
 
 
 #   --------
@@ -344,3 +370,12 @@ x-fake-api: driversCRUD
 x-fake-step: driversGetDriver2
 Prefer: code=404
 HTTP 404
+
+
+#   --------
+#   Delete Vehicles #1 and #2
+
+DELETE {{ host }}/vehicles/{{ vehicle01_id }}
+authorization: Bearer {{ auth }}
+Accept: application/json
+HTTP 200
