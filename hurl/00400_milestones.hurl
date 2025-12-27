@@ -29,17 +29,17 @@ variable "list_count" >= 0
 #   --------
 #   Scenario: Create a new Milestone
 #     When a POST request is send to "/milestones" with the following data:
-#       | field              | value               |
-#       | name               | "Main Depot"        |
-#       | location           | "37.7749,-122.4194" |
-#       | milestone_category | "DEPOT"             |
+#       | field    | value               |
+#       | name     | "Main Depot"        |
+#       | location | "37.7749,-122.4194" |
+#       | category | "DEPOT"             |
 #     Then the response status should be 200
 #     And the response should contain an object that contains:
-#       | field              | value               |
-#       | id                 | <milestone_id>      |
-#       | name               | "Main Depot"        |
-#       | location           | "37.7749,-122.4194" |
-#       | milestone_category | "DEPOT"             |
+#       | field    | value               |
+#       | id       | <milestone_id>      |
+#       | name     | "Main Depot"        |
+#       | location | "37.7749,-122.4194" |
+#       | category | "DEPOT"             |
 
 POST {{ host }}/milestones
 authorization: Bearer {{ auth }}
@@ -50,17 +50,18 @@ Prefer: example=milestone-1.0
 {
   "name": "Main Depot",
   "location": "37.7749,-122.4194",
-  "milestone_category": "DEPOT"
+  "category": "DEPOT"
 }
-HTTP 200
+HTTP 201
 [Captures]
 milestone_id: jsonpath "$.id"
 [Asserts]
 header "sl-violations" not exists
-jsonpath "$.id" isInteger
+header "location" exists
+jsonpath "$.id" isString
 jsonpath "$.name" == "Main Depot"
 jsonpath "$.location" == "37.7749,-122.4194"
-jsonpath "$.milestone_category" == "DEPOT"
+jsonpath "$.category" == "DEPOT"
 
 
 #   --------
@@ -69,11 +70,11 @@ jsonpath "$.milestone_category" == "DEPOT"
 #     Then the response status should be 200
 #     And the response should have one more item
 #     And the response should contain an object that contains:
-#       | field              | value               |
-#       | id                 | <milestone_id>      |
-#       | name               | "Main Depot"        |
-#       | location           | "37.7749,-122.4194" |
-#       | milestone_category | "DEPOT"             |
+#       | field    | value               |
+#       | id       | <milestone_id>      |
+#       | name     | "Main Depot"        |
+#       | location | "37.7749,-122.4194" |
+#       | category | "DEPOT"             |
 
 GET {{ host }}/milestones
 authorization: Bearer {{ auth }}
@@ -85,10 +86,10 @@ HTTP 200
 [Asserts]
 header "sl-violations" not exists
 jsonpath "$" count > {{ list_count }}
-jsonpath "$[?(@.id == {{ milestone_id }})]" count == 1
-jsonpath "$[?(@.id == {{ milestone_id }})].name" nth 0 == "Main Depot"
-jsonpath "$[?(@.id == {{ milestone_id }})].location" nth 0 == "37.7749,-122.4194"
-jsonpath "$[?(@.id == {{ milestone_id }})].milestone_category" nth 0 == "DEPOT"
+jsonpath "$[?(@.id == '{{ milestone_id }}')]" count == 1
+jsonpath "$[?(@.id == '{{ milestone_id }}')].name" nth 0 == "Main Depot"
+jsonpath "$[?(@.id == '{{ milestone_id }}')].location" nth 0 == "37.7749,-122.4194"
+jsonpath "$[?(@.id == '{{ milestone_id }}')].category" nth 0 == "DEPOT"
 
 
 #   --------
@@ -98,11 +99,11 @@ jsonpath "$[?(@.id == {{ milestone_id }})].milestone_category" nth 0 == "DEPOT"
 #     When a GET request is sent to "/milestones/<milestone_id>"
 #     Then the response status should be 200
 #     And the response should contain:
-#       | field              | value               |
-#       | id                 | <milestone_id>      |
-#       | name               | "Main Depot"        |
-#       | location           | "37.7749,-122.4194" |
-#       | milestone_category | "DEPOT"             |
+#       | field    | value               |
+#       | id       | <milestone_id>      |
+#       | name     | "Main Depot"        |
+#       | location | "37.7749,-122.4194" |
+#       | category | "DEPOT"             |
 
 GET {{ host }}/milestones/{{ milestone_id }}
 authorization: Bearer {{ auth }}
@@ -113,10 +114,10 @@ Prefer: example=milestone-1.0
 HTTP 200
 [Asserts]
 header "sl-violations" not exists
-jsonpath "$.id" == {{ milestone_id }}
+jsonpath "$.id" == "{{ milestone_id }}"
 jsonpath "$.name" == "Main Depot"
 jsonpath "$.location" == "37.7749,-122.4194"
-jsonpath "$.milestone_category" == "DEPOT"
+jsonpath "$.category" == "DEPOT"
 
 
 #   --------
@@ -124,16 +125,16 @@ jsonpath "$.milestone_category" == "DEPOT"
 #     Given a milestone exist
 #     And the milestone's ID is stored as <milestone_id>
 #     When a PATCH request is sent to "/milestones/<milestone_id>" with the following data:
-#       | field              | value                     |
-#       | name               | "Main Distribution Point" |
-#       | milestone_category | "DISTRIBUTION_CENTER"     |
+#       | field    | value                     |
+#       | name     | "Main Distribution Point" |
+#       | category | "DISTRIBUTION_CENTER"     |
 #     Then the response status should be 200
 #     And the response should contain:
-#       | field              | value                     |
-#       | id                 | <milestone_id>            |
-#       | name               | "Main Distribution Point" |
-#       | location           | "37.7749,-122.4194"       |
-#       | milestone_category | "DISTRIBUTION_CENTER"     |
+#       | field    | value                     |
+#       | id       | <milestone_id>            |
+#       | name     | "Main Distribution Point" |
+#       | location | "37.7749,-122.4194"       |
+#       | category | "DISTRIBUTION_CENTER"     |
 
 PATCH {{ host }}/milestones/{{ milestone_id }}
 authorization: Bearer {{ auth }}
@@ -143,15 +144,15 @@ x-fake-step: milestonesUpdateMilestone0
 Prefer: example=milestone-1.1
 {
   "name": "Main Distribution Point",
-  "milestone_category": "DISTRIBUTION_CENTER"
+  "category": "DISTRIBUTION_CENTER"
 }
 HTTP 200
 [Asserts]
 header "sl-violations" not exists
-jsonpath "$.id" == {{ milestone_id }}
+jsonpath "$.id" == "{{ milestone_id }}"
 jsonpath "$.name" == "Main Distribution Point"
 jsonpath "$.location" == "37.7749,-122.4194"
-jsonpath "$.milestone_category" == "DISTRIBUTION_CENTER"
+jsonpath "$.category" == "DISTRIBUTION_CENTER"
 
 
 #   --------
@@ -159,11 +160,11 @@ jsonpath "$.milestone_category" == "DISTRIBUTION_CENTER"
 #     When a GET request is send to "/milestones"
 #     Then the response status should be 200
 #     And the response should contain an object that contains:
-#       | field              | value                     |
-#       | id                 | <milestone_id>            |
-#       | name               | "Main Distribution Point" |
-#       | location           | "37.7749,-122.4194"       |
-#       | milestone_category | "DISTRIBUTION_CENTER"     |
+#       | field    | value                     |
+#       | id       | <milestone_id>            |
+#       | name     | "Main Distribution Point" |
+#       | location | "37.7749,-122.4194"       |
+#       | category | "DISTRIBUTION_CENTER"     |
 
 GET {{ host }}/milestones
 authorization: Bearer {{ auth }}
@@ -175,10 +176,10 @@ HTTP 200
 [Asserts]
 header "sl-violations" not exists
 jsonpath "$" count > {{ list_count }}
-jsonpath "$[?(@.id == {{ milestone_id }})]" count == 1
-jsonpath "$[?(@.id == {{ milestone_id }})].name" nth 0 == "Main Distribution Point"
-jsonpath "$[?(@.id == {{ milestone_id }})].location" nth 0 == "37.7749,-122.4194"
-jsonpath "$[?(@.id == {{ milestone_id }})].milestone_category" nth 0 == "DISTRIBUTION_CENTER"
+jsonpath "$[?(@.id == '{{ milestone_id }}')]" count == 1
+jsonpath "$[?(@.id == '{{ milestone_id }}')].name" nth 0 == "Main Distribution Point"
+jsonpath "$[?(@.id == '{{ milestone_id }}')].location" nth 0 == "37.7749,-122.4194"
+jsonpath "$[?(@.id == '{{ milestone_id }}')].category" nth 0 == "DISTRIBUTION_CENTER"
 
 
 #   --------
@@ -188,11 +189,11 @@ jsonpath "$[?(@.id == {{ milestone_id }})].milestone_category" nth 0 == "DISTRIB
 #     When a GET request is sent to "/milestones/<milestone_id>"
 #     Then the response status should be 200
 #     And the response should contain:
-#       | field              | value                     |
-#       | id                 | <milestone_id>            |
-#       | name               | "Main Distribution Point" |
-#       | location           | "37.7749,-122.4194"       |
-#       | milestone_category | "DISTRIBUTION_CENTER"     |
+#       | field    | value                     |
+#       | id       | <milestone_id>            |
+#       | name     | "Main Distribution Point" |
+#       | location | "37.7749,-122.4194"       |
+#       | category | "DISTRIBUTION_CENTER"     |
 
 GET {{ host }}/milestones/{{ milestone_id }}
 authorization: Bearer {{ auth }}
@@ -203,10 +204,10 @@ Prefer: example=milestone-1.1
 HTTP 200
 [Asserts]
 header "sl-violations" not exists
-jsonpath "$.id" == {{ milestone_id }}
+jsonpath "$.id" == "{{ milestone_id }}"
 jsonpath "$.name" == "Main Distribution Point"
 jsonpath "$.location" == "37.7749,-122.4194"
-jsonpath "$.milestone_category" == "DISTRIBUTION_CENTER"
+jsonpath "$.category" == "DISTRIBUTION_CENTER"
 
 
 #   --------
@@ -243,7 +244,7 @@ HTTP 200
 [Asserts]
 header "sl-violations" not exists
 jsonpath "$" count == {{ list_count }}
-jsonpath "$[?(@.id == {{ milestone_id }})]" count == 0
+jsonpath "$[?(@.id == '{{ milestone_id }}')]" count == 0
 
 
 #   --------
