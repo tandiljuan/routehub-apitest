@@ -106,13 +106,36 @@ x-fake-step: deliveryLotsCreate0
 Prefer: example=delivery-lot-1.0
 {
   "milestone_id": "{{ milestone01_id }}",
-  "deliveries": ["{{ delivery01_id }}"],
+  "deliveries": [
+    "{{ delivery01_id }}",
+    "{{ delivery02_id }}",
+    "{{ delivery03_id }}"
+  ],
   "fleet_id": "{{ fleet01_id }}"
 }
 HTTP 201
 [Captures]
 lot01_id: jsonpath "$.id"
 
+#   -----------------------------------
+
+#   --------
+#   Scenario: Get delivery plan for existing delivery lot
+#     Given a delivery-lots exists
+#     And the delivery-lots's ID is stored as <delivery_lot_id>
+#     When a GET request is sent to "/lots/<delivery_lot_id>/plan"
+#     Then the response status should be 200
+#     And the response should contain the delivery plan
+
+GET {{ host }}/lots/{{ lot01_id }}/plan
+authorization: Bearer {{ auth }}
+Accept: application/json
+x-fake-api: deliveryLotsCRUD
+x-fake-step: deliveryLotsGetPlan0
+Prefer: example=delivery-plan-1.0
+HTTP 404
+[Asserts]
+header "sl-violations" not exists
 
 #   --------
 #   Scenario: Generate/Update delivery plan for existing delivery lot
@@ -128,73 +151,67 @@ x-fake-api: deliveryLotsCRUD
 x-fake-step: deliveryLotsUpdatePlan0
 HTTP 202
 
-##   --------
-##   Scenario: Get delivery plan for existing delivery lot
-##     Given a delivery-lots exists
-##     And the delivery-lots's ID is stored as <delivery_lot_id>
-##     When a GET request is sent to "/lots/<delivery_lot_id>/plan"
-##     Then the response status should be 200
-##     And the response should contain the delivery plan
-#
-#GET {{ host }}/lots/{{ lot01_id }}/plan
-#authorization: Bearer {{ auth }}
-#Accept: application/json
-#x-fake-api: deliveryLotsCRUD
-#x-fake-step: deliveryLotsGetPlan0
-#Prefer: example=delivery-plan-1.0
-#HTTP 200
-#[Asserts]
-#header "sl-violations" not exists
-#jsonpath "$.delivery_lot_id" == {{ lot01_id }}
-#jsonpath "$.delivery_paths" count == 1
-#jsonpath "$.delivery_paths[0].milestone_id" == 1
-#jsonpath "$.delivery_paths[0].vehicle_id" == 1
-#jsonpath "$.delivery_paths[0].driver_id" == 1
-#jsonpath "$.delivery_paths[0].delivery_units" count == 2
-#jsonpath "$.delivery_paths[0].delivery_units[0]" == 1
-#jsonpath "$.delivery_paths[0].delivery_units[1]" == 2
+#   --------
+#   Scenario: Get delivery plan for existing delivery lot
+#     Given a delivery-lots exists
+#     And the delivery-lots's ID is stored as <delivery_lot_id>
+#     When a GET request is sent to "/lots/<delivery_lot_id>/plan"
+#     Then the response status should be 200
+#     And the response should contain the delivery plan
 
+GET {{ host }}/lots/{{ lot01_id }}/plan
+authorization: Bearer {{ auth }}
+Accept: application/json
+x-fake-api: deliveryLotsCRUD
+x-fake-step: deliveryLotsGetPlan0
+Prefer: example=delivery-plan-1.0
+HTTP 200
+[Asserts]
+header "sl-violations" not exists
+jsonpath "$.state" isString
 
-##   --------
-##   Delete Vehicles #1
-##   And Fleet #1
-##   And Milestone #1
-##   And Delivery #1
-##   And Delivery #2
-##   And Delivery #3
-##   And Delivery Lot #1
-#
-#DELETE {{ host }}/vehicles/{{ vehicle01_id }}
-#authorization: Bearer {{ auth }}
-#Accept: application/json
-#HTTP 200
-#
-#DELETE {{ host }}/fleets/{{ fleet01_id }}
-#authorization: Bearer {{ auth }}
-#Accept: application/json
-#HTTP 200
-#
-#DELETE {{ host }}/milestones/{{ milestone01_id }}
-#authorization: Bearer {{ auth }}
-#Accept: application/json
-#HTTP 200
-#
-#DELETE {{ host }}/deliveries/{{ delivery01_id }}
-#authorization: Bearer {{ auth }}
-#Accept: application/json
-#HTTP 200
-#
-#DELETE {{ host }}/deliveries/{{ delivery02_id }}
-#authorization: Bearer {{ auth }}
-#Accept: application/json
-#HTTP 200
-#
-#DELETE {{ host }}/deliveries/{{ delivery03_id }}
-#authorization: Bearer {{ auth }}
-#Accept: application/json
-#HTTP 200
-#
-#DELETE {{ host }}/lots/{{ lot01_id }}
-#authorization: Bearer {{ auth }}
-#Accept: application/json
-#HTTP 200
+#   -----------------------------------
+
+#   --------
+#   Delete Vehicles #1
+#   And Fleet #1
+#   And Milestone #1
+#   And Delivery #1
+#   And Delivery #2
+#   And Delivery #3
+#   And Delivery Lot #1
+
+DELETE {{ host }}/vehicles/{{ vehicle01_id }}
+authorization: Bearer {{ auth }}
+Accept: application/json
+HTTP 200
+
+DELETE {{ host }}/fleets/{{ fleet01_id }}
+authorization: Bearer {{ auth }}
+Accept: application/json
+HTTP 200
+
+DELETE {{ host }}/milestones/{{ milestone01_id }}
+authorization: Bearer {{ auth }}
+Accept: application/json
+HTTP 200
+
+DELETE {{ host }}/deliveries/{{ delivery01_id }}
+authorization: Bearer {{ auth }}
+Accept: application/json
+HTTP 200
+
+DELETE {{ host }}/deliveries/{{ delivery02_id }}
+authorization: Bearer {{ auth }}
+Accept: application/json
+HTTP 200
+
+DELETE {{ host }}/deliveries/{{ delivery03_id }}
+authorization: Bearer {{ auth }}
+Accept: application/json
+HTTP 200
+
+DELETE {{ host }}/lots/{{ lot01_id }}
+authorization: Bearer {{ auth }}
+Accept: application/json
+HTTP 200
