@@ -198,6 +198,67 @@ Prefer: example=delivery-plan-1.0
 retry: 12
 retry-interval: 5000
 HTTP 200
+[Captures]
+route01_id: jsonpath "$.routes[0].id"
+route02_id: jsonpath "$.routes[1].id"
+[Asserts]
+header "sl-violations" not exists
+jsonpath "$.state" == "PROCESSED"
+
+#   --------
+#   Scenario: Change deliveries order in a delivery plan
+#     Given a delivery-lots exists
+#     And the delivery-lots's ID is stored as <delivery_lot_id>
+#     When a PATCH request is sent to "/lots/<delivery_lot_id>/plan" with the following data:
+#       | field             | value                 |
+#       |-------------------+-----------------------|
+#       | [0].id            | "{{ route01_id }}"    |
+#       | [0].deliveries[0] | "{{ delivery01_id }}" |
+#       | [0].deliveries[1] | "{{ delivery02_id }}" |
+#       | [1].id            | "{{ route02_id }}"    |
+#       | [1].deliveries[0] | "{{ delivery03_id }}" |
+#       | [1].deliveries[1] | "{{ delivery04_id }}" |
+#     Then the response status should be 202
+
+PATCH {{ host }}/lots/{{ lot01_id }}/plan
+authorization: Bearer {{ auth }}
+Accept: application/json
+[
+  {
+    "id": "{{ route01_id }}",
+    "deliveries": [
+      "{{ delivery01_id }}",
+      "{{ delivery02_id }}"
+    ]
+  },
+  {
+    "id": "{{ route02_id }}",
+    "deliveries": [
+      "{{ delivery03_id }}",
+      "{{ delivery04_id }}"
+    ]
+  }
+]
+HTTP 202
+
+#   --------
+#   Scenario: Get delivery plan for existing delivery lot
+#     Given a delivery-lots exists
+#     And the delivery-lots's ID is stored as <delivery_lot_id>
+#     When a GET request is sent to "/lots/<delivery_lot_id>/plan"
+#     Then the response status should be 200
+#     And the response should contain the delivery plan
+
+GET {{ host }}/lots/{{ lot01_id }}/plan
+authorization: Bearer {{ auth }}
+Accept: application/json
+x-fake-api: deliveryLotsCRUD
+x-fake-step: deliveryLotsGetPlan0
+Prefer: example=delivery-plan-1.0
+[Options]
+retry: 12
+retry-interval: 5000
+HTTP 200
 [Asserts]
 header "sl-violations" not exists
 jsonpath "$.state" == "PROCESSED"
