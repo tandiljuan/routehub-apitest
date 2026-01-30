@@ -153,8 +153,7 @@ lot01_id: jsonpath "$.id"
 #     Given a delivery-lots exists
 #     And the delivery-lots's ID is stored as <delivery_lot_id>
 #     When a GET request is sent to "/lots/<delivery_lot_id>/plan"
-#     Then the response status should be 200
-#     And the response should contain the delivery plan
+#     Then the response status should be 404
 
 GET {{ host }}/lots/{{ lot01_id }}/plan
 authorization: Bearer {{ auth }}
@@ -171,7 +170,7 @@ header "sl-violations" not exists
 #     Given a delivery-lots exists
 #     And the delivery-lots's ID is stored as <delivery_lot_id>
 #     When a POST request is sent to "/lots/<delivery_lot_id>/plan"
-#     Then the response status should be 200
+#     Then the response status should be 202
 
 POST {{ host }}/lots/{{ lot01_id }}/plan
 authorization: Bearer {{ auth }}
