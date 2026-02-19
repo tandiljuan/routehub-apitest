@@ -13,3 +13,19 @@ The following command demonstrates how to run the entire test suite sequentially
 ```bash
 hurl --jobs 1 --test --variables-file env.mock *.hurl
 ```
+
+Other Tools to Review
+---------------------
+
+- [tavern](https://github.com/taverntesting/tavern)
+- [httpyac](https://github.com/AnWeber/httpyac)
+- [supertest](https://github.com/forwardemail/supertest)
+- `npm install mocha axios chai --save-dev`
+  + [mocha](https://github.com/mochajs/mocha)
+  + [axios](https://github.com/axios/axios)
+  + [chai](https://github.com/chaijs/chai)
+- [playwright](https://playwright.dev/docs/api-testing) (+ browser)
+- [k6](https://github.com/grafana/k6) (+ performance/load tests)
+- [artillery](https://github.com/artilleryio/artillery) (+ performance/load tests)
+- [hoppscotch cli](https://docs.hoppscotch.io/documentation/clients/cli/overview) (+ web ui)
+- [burno cli](https://docs.usebruno.com/bru-cli/overview) (+ web ui)
