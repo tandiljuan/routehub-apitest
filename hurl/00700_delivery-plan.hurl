@@ -17,46 +17,46 @@
 #       | field    | value                    |
 #       |----------+--------------------------|
 #       | name     | "Main Depot"             |
-#       | location | "-34.621392,-58.389410/" |
+#       | location | "-34.621392-58.389410/"  |
 #     And a bulk of deliveries is created with the following data:
 #       | field        | value                    |
 #       |--------------+--------------------------|
 #       | ------[[ Route 01  Delivery 01 ]]------ |
 #       | milestone_id | "{{ milestone01_id }}"   |
-#       | destination  | "-34.601388,-58.403577/" |
+#       | destination  | "-34.601388-58.403577/"  |
 #       | ------[[ Route 01  Delivery 02 ]]------ |
 #       | milestone_id | "{{ milestone01_id }}"   |
-#       | destination  | "-34.600900,-58.402955/" |
+#       | destination  | "-34.600900-58.402955/"  |
 #       | ------[[ Route 01  Delivery 03 ]]------ |
 #       | milestone_id | "{{ milestone01_id }}"   |
-#       | destination  | "-34.601049,-58.401732/" |
+#       | destination  | "-34.601049-58.401732/"  |
 #       | ------[[ Route 02  Delivery 04 ]]------ |
 #       | milestone_id | "{{ milestone01_id }}"   |
-#       | destination  | "-34.637377,-58.398374/" |
+#       | destination  | "-34.637377-58.398374/"  |
 #       | ------[[ Route 02  Delivery 05 ]]------ |
 #       | milestone_id | "{{ milestone01_id }}"   |
-#       | destination  | "-34.638803,-58.397779/" |
+#       | destination  | "-34.638803-58.397779/"  |
 #       | ------[[ Route 02  Delivery 06 ]]------ |
 #       | milestone_id | "{{ milestone01_id }}"   |
-#       | destination  | "-34.639175,-58.396853/" |
+#       | destination  | "-34.639175-58.396853/"  |
 #       | ------[[ Route 03  Delivery 07 ]]------ |
 #       | milestone_id | "{{ milestone01_id }}"   |
-#       | destination  | "-34.627426,-58.420572/" |
+#       | destination  | "-34.627426-58.420572/"  |
 #       | ------[[ Route 03  Delivery 08 ]]------ |
 #       | milestone_id | "{{ milestone01_id }}"   |
-#       | destination  | "-34.626838,-58.421366/" |
+#       | destination  | "-34.626838-58.421366/"  |
 #       | ------[[ Route 03  Delivery 09 ]]------ |
 #       | milestone_id | "{{ milestone01_id }}"   |
-#       | destination  | "-34.625510,-58.421699/" |
+#       | destination  | "-34.625510-58.421699/"  |
 #       | ------[[ Route 04  Delivery 10 ]]------ |
 #       | milestone_id | "{{ milestone01_id }}"   |
-#       | destination  | "-34.618431,-58.370903/" |
+#       | destination  | "-34.618431-58.370903/"  |
 #       | ------[[ Route 04  Delivery 11 ]]------ |
 #       | milestone_id | "{{ milestone01_id }}"   |
-#       | destination  | "-34.618927,-58.370149/" |
+#       | destination  | "-34.618927-58.370149/"  |
 #       | ------[[ Route 04  Delivery 12 ]]------ |
 #       | milestone_id | "{{ milestone01_id }}"   |
-#       | destination  | "-34.619441,-58.370828/" |
+#       | destination  | "-34.619441-58.370828/"  |
 #     And the lot #1 is created with the following data:
 #       | field                    | value                    |
 #       |--------------------------+--------------------------|
@@ -117,7 +117,7 @@ x-fake-step: milestonesCreate0
 Prefer: example=milestone-1.0
 {
   "name": "Main Depot",
-  "location": "-34.621392,-58.389410/"
+  "location": "-34.621392-58.389410/"
 }
 HTTP 201
 [Captures]
@@ -129,51 +129,51 @@ Accept: application/json
 [
   {
     "milestone_id": "{{ milestone01_id }}",
-    "destination": "-34.601388,-58.403577/"
+    "destination": "-34.601388-58.403577/"
   },
   {
     "milestone_id": "{{ milestone01_id }}",
-    "destination": "-34.600900,-58.402955/"
+    "destination": "-34.600900-58.402955/"
   },
   {
     "milestone_id": "{{ milestone01_id }}",
-    "destination": "-34.601049,-58.401732/"
+    "destination": "-34.601049-58.401732/"
   },
   {
     "milestone_id": "{{ milestone01_id }}",
-    "destination": "-34.637377,-58.398374/"
+    "destination": "-34.637377-58.398374/"
   },
   {
     "milestone_id": "{{ milestone01_id }}",
-    "destination": "-34.638803,-58.397779/"
+    "destination": "-34.638803-58.397779/"
   },
   {
     "milestone_id": "{{ milestone01_id }}",
-    "destination": "-34.639175,-58.396853/"
+    "destination": "-34.639175-58.396853/"
   },
   {
     "milestone_id": "{{ milestone01_id }}",
-    "destination": "-34.627426,-58.420572/"
+    "destination": "-34.627426-58.420572/"
   },
   {
     "milestone_id": "{{ milestone01_id }}",
-    "destination": "-34.626838,-58.421366/"
+    "destination": "-34.626838-58.421366/"
   },
   {
     "milestone_id": "{{ milestone01_id }}",
-    "destination": "-34.625510,-58.421699/"
+    "destination": "-34.625510-58.421699/"
   },
   {
     "milestone_id": "{{ milestone01_id }}",
-    "destination": "-34.618431,-58.370903/"
+    "destination": "-34.618431-58.370903/"
   },
   {
     "milestone_id": "{{ milestone01_id }}",
-    "destination": "-34.618927,-58.370149/"
+    "destination": "-34.618927-58.370149/"
   },
   {
     "milestone_id": "{{ milestone01_id }}",
-    "destination": "-34.619441,-58.370828/"
+    "destination": "-34.619441-58.370828/"
   }
 ]
 HTTP 200
