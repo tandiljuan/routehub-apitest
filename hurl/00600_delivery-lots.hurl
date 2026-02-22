@@ -17,15 +17,15 @@
 #     And the milestone #1 is created with the following data:
 #       | field    | value               |
 #       | name     | "Main Depot"        |
-#       | location | "37.7749,-122.4194" |
+#       | location | "37.7749-122.4194"  |
 #     And the delivery #1 is created with the following data:
 #       | field           | value                        |
 #       | milestone_id    | "{{ milestone01_id }}"       |
-#       | destination     | "37.7749,-122.4194"          |
+#       | destination     | "37.7749-122.4194"           |
 #     And the delivery #2 is created with the following data:
 #       | field           | value                        |
 #       | milestone_id    | "{{ milestone01_id }}"       |
-#       | destination     | "37.7749,-122.4194"          |
+#       | destination     | "37.7749-122.4194"           |
 
 POST {{ host }}/vehicles
 authorization: Bearer {{ auth }}
@@ -75,7 +75,7 @@ x-fake-step: milestonesCreate0
 Prefer: example=milestone-1.0
 {
   "name": "Main Depot",
-  "location": "37.7749,-122.4194"
+  "location": "37.7749-122.4194"
 }
 HTTP 201
 [Captures]
@@ -89,7 +89,7 @@ x-fake-step: deliveriesCreate0
 Prefer: example=delivery-1.0
 {
   "milestone_id": "{{ milestone01_id }}",
-  "destination": "37.7749,-122.4194"
+  "destination": "37.7749-122.4194"
 }
 HTTP 201
 [Captures]
@@ -103,7 +103,7 @@ x-fake-step: deliveriesCreate0
 Prefer: example=delivery-1.0
 {
   "milestone_id": "{{ milestone01_id }}",
-  "destination": "37.7749,-122.4194"
+  "destination": "37.7749-122.4194"
 }
 HTTP 201
 [Captures]
