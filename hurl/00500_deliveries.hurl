@@ -7,7 +7,7 @@
 #     And the milestone #1 is created with the following data:
 #       | field    | value               |
 #       | name     | "Main Depot"        |
-#       | location | "37.7749,-122.4194" |
+#       | location | "+37.7749-122.4194" |
 #       | category | "DEPOT"             |
 
 POST {{ host }}/milestones
@@ -18,7 +18,7 @@ x-fake-step: milestonesCreate0
 Prefer: example=milestone-1.0
 {
   "name": "Main Depot",
-  "location": "37.7749,-122.4194",
+  "location": "+37.7749-122.4194",
   "category": "DEPOT"
 }
 HTTP 201
@@ -52,7 +52,7 @@ variable "list_count" >= 0
 #       | field           | value                        |
 #       | method          | "DELIVERY"                   |
 #       | milestone_id    | "{{ milestone01_id }}"       |
-#       | destination     | "37.7749,-122.4194"          |
+#       | destination     | "+37.7749-122.4194"          |
 #       | schedules       | ["DTSTART:20240704T120000Z"] |
 #       | width           | 10                           |
 #       | height          | 20                           |
@@ -79,7 +79,7 @@ Prefer: example=delivery-1.0
 {
   "method": "DELIVERY",
   "milestone_id": "{{ milestone01_id }}",
-  "destination": "37.7749,-122.4194",
+  "destination": "+37.7749-122.4194",
   "schedules": ["DTSTART:20240704T120000Z"],
   "width": 10,
   "height": 20,
@@ -104,7 +104,7 @@ header "location" exists
 jsonpath "$.id" isString
 jsonpath "$.method" == "DELIVERY"
 jsonpath "$.milestone.id" == "{{ milestone01_id }}"
-jsonpath "$.destination" == "37.7749,-122.4194"
+jsonpath "$.destination" == "+37.7749-122.4194"
 jsonpath "$.schedules" count == 1
 jsonpath "$.schedules[0]" == "DTSTART:20240704T120000Z"
 jsonpath "$.width" == 10
@@ -133,7 +133,7 @@ jsonpath "$.extra.note" == "custom"
 #       | id              | <delivery_id>                 |
 #       | method          | "DELIVERY"                    |
 #       | milestone       | {"id":"{{ milestone01_id }}"} |
-#       | destination     | "37.7749,-122.4194"           |
+#       | destination     | "+37.7749-122.4194"           |
 #       | schedules       | ["DTSTART:20240704T120000Z"]  |
 #       | width           | 10                            |
 #       | height          | 20                            |
@@ -162,7 +162,7 @@ jsonpath "$" count > {{ list_count }}
 jsonpath "$[?(@.id == '{{ delivery_id }}')]" count == 1
 jsonpath "$[?(@.id == '{{ delivery_id }}')].method" nth 0  == "DELIVERY"
 jsonpath "$[?(@.id == '{{ delivery_id }}')].milestone.id" nth 0  == "{{ milestone01_id }}"
-jsonpath "$[?(@.id == '{{ delivery_id }}')].destination" nth 0  == "37.7749,-122.4194"
+jsonpath "$[?(@.id == '{{ delivery_id }}')].destination" nth 0  == "+37.7749-122.4194"
 jsonpath "$[?(@.id == '{{ delivery_id }}')].schedules" nth 0  count == 1
 jsonpath "$[?(@.id == '{{ delivery_id }}')].schedules[0]" nth 0  == "DTSTART:20240704T120000Z"
 jsonpath "$[?(@.id == '{{ delivery_id }}')].width" nth 0  == 10
@@ -192,7 +192,7 @@ jsonpath "$[?(@.id == '{{ delivery_id }}')].extra.note" nth 0  == "custom"
 #       | id              | <delivery_id>                 |
 #       | method          | "DELIVERY"                    |
 #       | milestone       | {"id":"{{ milestone01_id }}"} |
-#       | destination     | "37.7749,-122.4194"           |
+#       | destination     | "+37.7749-122.4194"           |
 #       | schedules       | ["DTSTART:20240704T120000Z"]  |
 #       | width           | 10                            |
 #       | height          | 20                            |
@@ -220,7 +220,7 @@ header "sl-violations" not exists
 jsonpath "$.id" == "{{ delivery_id }}"
 jsonpath "$.method" == "DELIVERY"
 jsonpath "$.milestone.id" == "{{ milestone01_id }}"
-jsonpath "$.destination" == "37.7749,-122.4194"
+jsonpath "$.destination" == "+37.7749-122.4194"
 jsonpath "$.schedules" count == 1
 jsonpath "$.schedules[0]" == "DTSTART:20240704T120000Z"
 jsonpath "$.width" == 10
@@ -256,7 +256,7 @@ jsonpath "$.extra.note" == "custom"
 #       | id              | <delivery_id>                 |
 #       | method          | "DELIVERY"                    |
 #       | milestone       | {"id":"{{ milestone01_id }}"} |
-#       | destination     | "37.7749,-122.4194"           |
+#       | destination     | "+37.7749-122.4194"           |
 #       | schedules       | ["DTSTART:20240704T120000Z"]  |
 #       | width           | 15                            |
 #       | height          | 25                            |
@@ -291,7 +291,7 @@ header "sl-violations" not exists
 jsonpath "$.id" == "{{ delivery_id }}"
 jsonpath "$.method" == "DELIVERY"
 jsonpath "$.milestone.id" == "{{ milestone01_id }}"
-jsonpath "$.destination" == "37.7749,-122.4194"
+jsonpath "$.destination" == "+37.7749-122.4194"
 jsonpath "$.schedules" count == 1
 jsonpath "$.schedules[0]" == "DTSTART:20240704T120000Z"
 jsonpath "$.width" == 15
@@ -319,7 +319,7 @@ jsonpath "$.extra.note" == "custom"
 #       | id              | <delivery_id>                 |
 #       | method          | "DELIVERY"                    |
 #       | milestone       | {"id":"{{ milestone01_id }}"} |
-#       | destination     | "37.7749,-122.4194"           |
+#       | destination     | "+37.7749-122.4194"           |
 #       | schedules       | ["DTSTART:20240704T120000Z"]  |
 #       | width           | 15                            |
 #       | height          | 25                            |
@@ -348,7 +348,7 @@ jsonpath "$" count > {{ list_count }}
 jsonpath "$[?(@.id == '{{ delivery_id }}')]" count == 1
 jsonpath "$[?(@.id == '{{ delivery_id }}')].method" nth 0  == "DELIVERY"
 jsonpath "$[?(@.id == '{{ delivery_id }}')].milestone.id" nth 0  == "{{ milestone01_id }}"
-jsonpath "$[?(@.id == '{{ delivery_id }}')].destination" nth 0  == "37.7749,-122.4194"
+jsonpath "$[?(@.id == '{{ delivery_id }}')].destination" nth 0  == "+37.7749-122.4194"
 jsonpath "$[?(@.id == '{{ delivery_id }}')].schedules" nth 0  count == 1
 jsonpath "$[?(@.id == '{{ delivery_id }}')].schedules[0]" nth 0  == "DTSTART:20240704T120000Z"
 jsonpath "$[?(@.id == '{{ delivery_id }}')].width" nth 0  == 15
@@ -378,7 +378,7 @@ jsonpath "$[?(@.id == '{{ delivery_id }}')].extra.note" nth 0  == "custom"
 #       | id              | <delivery_id>                 |
 #       | method          | "DELIVERY"                    |
 #       | milestone       | {"id":"{{ milestone01_id }}"} |
-#       | destination     | "37.7749,-122.4194"           |
+#       | destination     | "+37.7749-122.4194"           |
 #       | schedules       | ["DTSTART:20240704T120000Z"]  |
 #       | width           | 15                            |
 #       | height          | 25                            |
@@ -406,7 +406,7 @@ header "sl-violations" not exists
 jsonpath "$.id" == "{{ delivery_id }}"
 jsonpath "$.method" == "DELIVERY"
 jsonpath "$.milestone.id" == "{{ milestone01_id }}"
-jsonpath "$.destination" == "37.7749,-122.4194"
+jsonpath "$.destination" == "+37.7749-122.4194"
 jsonpath "$.schedules" count == 1
 jsonpath "$.schedules[0]" == "DTSTART:20240704T120000Z"
 jsonpath "$.width" == 15
@@ -485,15 +485,15 @@ HTTP 404
 #       | ----------------- Delivery 01 ---------------- |
 #       | field           | value                        |
 #       | milestone_id    | "{{ milestone01_id }}"       |
-#       | destination     | "37.7749,-122.4194"          |
+#       | destination     | "+37.7749-122.4194"          |
 #       | ----------------- Delivery 02 ---------------- |
 #       | field           | value                        |
 #       | milestone_id    | "{{ milestone01_id }}"       |
-#       | destination     | "37.7749,-122.4194"          |
+#       | destination     | "+37.7749-122.4194"          |
 #       | ----------------- Delivery 03 ---------------- |
 #       | field           | value                        |
 #       | milestone_id    | "{{ milestone01_id }}"       |
-#       | destination     | "37.7749,-122.4194"          |
+#       | destination     | "+37.7749-122.4194"          |
 #     Then the response status should be 200
 #     And the response should contain a list with the IDs of the created deliveries
 
@@ -503,15 +503,15 @@ Accept: application/json
 [
   {
     "milestone_id": "{{ milestone01_id }}",
-    "destination": "37.7749,-122.4194"
+    "destination": "+37.7749-122.4194"
   },
   {
     "milestone_id": "{{ milestone01_id }}",
-    "destination": "37.7749,-122.4194"
+    "destination": "+37.7749-122.4194"
   },
   {
     "milestone_id": "{{ milestone01_id }}",
-    "destination": "37.7749,-122.4194"
+    "destination": "+37.7749-122.4194"
   }
 ]
 HTTP 200
