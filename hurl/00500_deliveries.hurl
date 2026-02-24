@@ -516,14 +516,14 @@ Accept: application/json
 ]
 HTTP 200
 [Captures]
-delivery01_id: jsonpath "$[0]"
-delivery02_id: jsonpath "$[1]"
-delivery03_id: jsonpath "$[2]"
+delivery01_id: jsonpath "$.success[0].id"
+delivery02_id: jsonpath "$.success[1].id"
+delivery03_id: jsonpath "$.success[2].id"
 [Asserts]
 header "sl-violations" not exists
-jsonpath "$[0]" isString
-jsonpath "$[1]" isString
-jsonpath "$[2]" isString
+jsonpath "$.success[0].id" isString
+jsonpath "$.success[1].id" isString
+jsonpath "$.success[2].id" isString
 
 
 #   --------

@@ -178,18 +178,18 @@ Accept: application/json
 ]
 HTTP 200
 [Captures]
-delivery01_id: jsonpath "$[0]"
-delivery02_id: jsonpath "$[1]"
-delivery03_id: jsonpath "$[2]"
-delivery04_id: jsonpath "$[3]"
-delivery05_id: jsonpath "$[4]"
-delivery06_id: jsonpath "$[5]"
-delivery07_id: jsonpath "$[6]"
-delivery08_id: jsonpath "$[7]"
-delivery09_id: jsonpath "$[8]"
-delivery10_id: jsonpath "$[9]"
-delivery11_id: jsonpath "$[10]"
-delivery12_id: jsonpath "$[11]"
+delivery01_id: jsonpath "$.success[0].id"
+delivery02_id: jsonpath "$.success[1].id"
+delivery03_id: jsonpath "$.success[2].id"
+delivery04_id: jsonpath "$.success[3].id"
+delivery05_id: jsonpath "$.success[4].id"
+delivery06_id: jsonpath "$.success[5].id"
+delivery07_id: jsonpath "$.success[6].id"
+delivery08_id: jsonpath "$.success[7].id"
+delivery09_id: jsonpath "$.success[8].id"
+delivery10_id: jsonpath "$.success[9].id"
+delivery11_id: jsonpath "$.success[10].id"
+delivery12_id: jsonpath "$.success[11].id"
 
 POST {{ host }}/lots
 authorization: Bearer {{ auth }}
