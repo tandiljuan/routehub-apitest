@@ -280,6 +280,7 @@ HTTP 200
 [Captures]
 route01_id: jsonpath "$.routes[0].id"
 route02_id: jsonpath "$.routes[1].id"
+route03_id: jsonpath "$.routes[2].id"
 [Asserts]
 header "sl-violations" not exists
 jsonpath "$.state" == "PROCESSED"
@@ -299,6 +300,8 @@ jsonpath "$.state" == "PROCESSED"
 #       | [1].deliveries[1] | "{{ delivery03_id }}" |
 #       | [1].deliveries[2] | "{{ delivery04_id }}" |
 #       | [1].deliveries[3] | "{{ delivery06_id }}" |
+#       | [2].id            | "{{ route03_id }}"    |
+#       | [2].deliveries    | []                    |
 #     Then the response status should be 202
 
 PATCH {{ host }}/lots/{{ lot01_id }}/plan
@@ -320,6 +323,10 @@ Accept: application/json
       "{{ delivery04_id }}",
       "{{ delivery06_id }}"
     ]
+  },
+  {
+    "id": "{{ route03_id }}",
+    "deliveries": []
   }
 ]
 HTTP 202
@@ -355,6 +362,7 @@ jsonpath "$.routes[?(@.id == '{{ route02_id }}')].deliveries[?(@.id == '{{ deliv
 jsonpath "$.routes[?(@.id == '{{ route02_id }}')].deliveries[?(@.id == '{{ delivery03_id }}')]" count == 1
 jsonpath "$.routes[?(@.id == '{{ route02_id }}')].deliveries[?(@.id == '{{ delivery04_id }}')]" count == 1
 jsonpath "$.routes[?(@.id == '{{ route02_id }}')].deliveries[?(@.id == '{{ delivery06_id }}')]" count == 1
+jsonpath "$.routes[?(@.id == '{{ route03_id }}')]" count == 0
 
 
 #   -----------------------------------
