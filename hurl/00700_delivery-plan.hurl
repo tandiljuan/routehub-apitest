@@ -364,6 +364,51 @@ jsonpath "$.routes[?(@.id == '{{ route02_id }}')].deliveries[?(@.id == '{{ deliv
 jsonpath "$.routes[?(@.id == '{{ route02_id }}')].deliveries[?(@.id == '{{ delivery06_id }}')]" count == 1
 jsonpath "$.routes[?(@.id == '{{ route03_id }}')]" count == 0
 
+#   --------
+#   Scenario: Delete route from delivery plan
+#     Given a delivery-lots exists
+#     And the delivery-lots's ID is stored as <delivery_lot_id>
+#     When a PATCH request is sent to "/lots/<delivery_lot_id>/plan" with the following data:
+#       | field             | value                 |
+#       |-------------------+-----------------------|
+#       | [0].id            | "{{ route02_id }}"    |
+#       | [0].deliveries    | []                    |
+#     Then the response status should be 202
+
+PATCH {{ host }}/lots/{{ lot01_id }}/plan
+authorization: Bearer {{ auth }}
+Accept: application/json
+[
+  {
+    "id": "{{ route02_id }}",
+    "deliveries": []
+  }
+]
+HTTP 202
+
+#   --------
+#   Scenario: Get delivery plan for existing delivery lot
+#     Given a delivery-lots exists
+#     And the delivery-lots's ID is stored as <delivery_lot_id>
+#     When a GET request is sent to "/lots/<delivery_lot_id>/plan"
+#     Then the response status should be 200
+#     And the response should contain the delivery plan
+
+GET {{ host }}/lots/{{ lot01_id }}/plan
+authorization: Bearer {{ auth }}
+Accept: application/json
+x-fake-api: deliveryLotsCRUD
+x-fake-step: deliveryLotsGetPlan0
+Prefer: example=delivery-plan-1.0
+[Options]
+retry: 12
+retry-interval: 5000
+HTTP 200
+[Asserts]
+header "sl-violations" not exists
+jsonpath "$.state" == "PROCESSED"
+jsonpath "$.routes[?(@.id == '{{ route02_id }}')]" count == 0
+
 
 #   -----------------------------------
 
