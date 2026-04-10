@@ -17,46 +17,46 @@
 #       | field    | value                    |
 #       |----------+--------------------------|
 #       | name     | "Main Depot"             |
-#       | location | "-34.621392,-58.389410/" |
+#       | location | "-34.621392-58.389410/"  |
 #     And a bulk of deliveries is created with the following data:
 #       | field        | value                    |
 #       |--------------+--------------------------|
 #       | ------[[ Route 01  Delivery 01 ]]------ |
 #       | milestone_id | "{{ milestone01_id }}"   |
-#       | destination  | "-34.601388,-58.403577/" |
+#       | destination  | "-34.601388-58.403577/"  |
 #       | ------[[ Route 01  Delivery 02 ]]------ |
 #       | milestone_id | "{{ milestone01_id }}"   |
-#       | destination  | "-34.600900,-58.402955/" |
+#       | destination  | "-34.600900-58.402955/"  |
 #       | ------[[ Route 01  Delivery 03 ]]------ |
 #       | milestone_id | "{{ milestone01_id }}"   |
-#       | destination  | "-34.601049,-58.401732/" |
+#       | destination  | "-34.601049-58.401732/"  |
 #       | ------[[ Route 02  Delivery 04 ]]------ |
 #       | milestone_id | "{{ milestone01_id }}"   |
-#       | destination  | "-34.637377,-58.398374/" |
+#       | destination  | "-34.637377-58.398374/"  |
 #       | ------[[ Route 02  Delivery 05 ]]------ |
 #       | milestone_id | "{{ milestone01_id }}"   |
-#       | destination  | "-34.638803,-58.397779/" |
+#       | destination  | "-34.638803-58.397779/"  |
 #       | ------[[ Route 02  Delivery 06 ]]------ |
 #       | milestone_id | "{{ milestone01_id }}"   |
-#       | destination  | "-34.639175,-58.396853/" |
+#       | destination  | "-34.639175-58.396853/"  |
 #       | ------[[ Route 03  Delivery 07 ]]------ |
 #       | milestone_id | "{{ milestone01_id }}"   |
-#       | destination  | "-34.627426,-58.420572/" |
+#       | destination  | "-34.627426-58.420572/"  |
 #       | ------[[ Route 03  Delivery 08 ]]------ |
 #       | milestone_id | "{{ milestone01_id }}"   |
-#       | destination  | "-34.626838,-58.421366/" |
+#       | destination  | "-34.626838-58.421366/"  |
 #       | ------[[ Route 03  Delivery 09 ]]------ |
 #       | milestone_id | "{{ milestone01_id }}"   |
-#       | destination  | "-34.625510,-58.421699/" |
+#       | destination  | "-34.625510-58.421699/"  |
 #       | ------[[ Route 04  Delivery 10 ]]------ |
 #       | milestone_id | "{{ milestone01_id }}"   |
-#       | destination  | "-34.618431,-58.370903/" |
+#       | destination  | "-34.618431-58.370903/"  |
 #       | ------[[ Route 04  Delivery 11 ]]------ |
 #       | milestone_id | "{{ milestone01_id }}"   |
-#       | destination  | "-34.618927,-58.370149/" |
+#       | destination  | "-34.618927-58.370149/"  |
 #       | ------[[ Route 04  Delivery 12 ]]------ |
 #       | milestone_id | "{{ milestone01_id }}"   |
-#       | destination  | "-34.619441,-58.370828/" |
+#       | destination  | "-34.619441-58.370828/"  |
 #     And the lot #1 is created with the following data:
 #       | field                    | value                    |
 #       |--------------------------+--------------------------|
@@ -117,7 +117,7 @@ x-fake-step: milestonesCreate0
 Prefer: example=milestone-1.0
 {
   "name": "Main Depot",
-  "location": "-34.621392,-58.389410/"
+  "location": "-34.621392-58.389410/"
 }
 HTTP 201
 [Captures]
@@ -129,67 +129,67 @@ Accept: application/json
 [
   {
     "milestone_id": "{{ milestone01_id }}",
-    "destination": "-34.601388,-58.403577/"
+    "destination": "-34.601388-58.403577/"
   },
   {
     "milestone_id": "{{ milestone01_id }}",
-    "destination": "-34.600900,-58.402955/"
+    "destination": "-34.600900-58.402955/"
   },
   {
     "milestone_id": "{{ milestone01_id }}",
-    "destination": "-34.601049,-58.401732/"
+    "destination": "-34.601049-58.401732/"
   },
   {
     "milestone_id": "{{ milestone01_id }}",
-    "destination": "-34.637377,-58.398374/"
+    "destination": "-34.637377-58.398374/"
   },
   {
     "milestone_id": "{{ milestone01_id }}",
-    "destination": "-34.638803,-58.397779/"
+    "destination": "-34.638803-58.397779/"
   },
   {
     "milestone_id": "{{ milestone01_id }}",
-    "destination": "-34.639175,-58.396853/"
+    "destination": "-34.639175-58.396853/"
   },
   {
     "milestone_id": "{{ milestone01_id }}",
-    "destination": "-34.627426,-58.420572/"
+    "destination": "-34.627426-58.420572/"
   },
   {
     "milestone_id": "{{ milestone01_id }}",
-    "destination": "-34.626838,-58.421366/"
+    "destination": "-34.626838-58.421366/"
   },
   {
     "milestone_id": "{{ milestone01_id }}",
-    "destination": "-34.625510,-58.421699/"
+    "destination": "-34.625510-58.421699/"
   },
   {
     "milestone_id": "{{ milestone01_id }}",
-    "destination": "-34.618431,-58.370903/"
+    "destination": "-34.618431-58.370903/"
   },
   {
     "milestone_id": "{{ milestone01_id }}",
-    "destination": "-34.618927,-58.370149/"
+    "destination": "-34.618927-58.370149/"
   },
   {
     "milestone_id": "{{ milestone01_id }}",
-    "destination": "-34.619441,-58.370828/"
+    "destination": "-34.619441-58.370828/"
   }
 ]
 HTTP 200
 [Captures]
-delivery01_id: jsonpath "$[0]"
-delivery02_id: jsonpath "$[1]"
-delivery03_id: jsonpath "$[2]"
-delivery04_id: jsonpath "$[3]"
-delivery05_id: jsonpath "$[4]"
-delivery06_id: jsonpath "$[5]"
-delivery07_id: jsonpath "$[6]"
-delivery08_id: jsonpath "$[7]"
-delivery09_id: jsonpath "$[8]"
-delivery10_id: jsonpath "$[9]"
-delivery11_id: jsonpath "$[10]"
-delivery12_id: jsonpath "$[11]"
+delivery01_id: jsonpath "$.success[0].id"
+delivery02_id: jsonpath "$.success[1].id"
+delivery03_id: jsonpath "$.success[2].id"
+delivery04_id: jsonpath "$.success[3].id"
+delivery05_id: jsonpath "$.success[4].id"
+delivery06_id: jsonpath "$.success[5].id"
+delivery07_id: jsonpath "$.success[6].id"
+delivery08_id: jsonpath "$.success[7].id"
+delivery09_id: jsonpath "$.success[8].id"
+delivery10_id: jsonpath "$.success[9].id"
+delivery11_id: jsonpath "$.success[10].id"
+delivery12_id: jsonpath "$.success[11].id"
 
 POST {{ host }}/lots
 authorization: Bearer {{ auth }}

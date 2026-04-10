@@ -31,14 +31,14 @@ variable "list_count" >= 0
 #     When a POST request is send to "/milestones" with the following data:
 #       | field    | value               |
 #       | name     | "Main Depot"        |
-#       | location | "37.7749,-122.4194" |
+#       | location | "37.7749-122.4194"  |
 #       | category | "DEPOT"             |
 #     Then the response status should be 200
 #     And the response should contain an object that contains:
 #       | field    | value               |
 #       | id       | <milestone_id>      |
 #       | name     | "Main Depot"        |
-#       | location | "37.7749,-122.4194" |
+#       | location | "+37.7749-122.4194" |
 #       | category | "DEPOT"             |
 
 POST {{ host }}/milestones
@@ -49,7 +49,7 @@ x-fake-step: milestonesCreate0
 Prefer: example=milestone-1.0
 {
   "name": "Main Depot",
-  "location": "37.7749,-122.4194",
+  "location": "37.7749-122.4194",
   "category": "DEPOT"
 }
 HTTP 201
@@ -60,7 +60,7 @@ header "sl-violations" not exists
 header "location" exists
 jsonpath "$.id" isString
 jsonpath "$.name" == "Main Depot"
-jsonpath "$.location" == "37.7749,-122.4194"
+jsonpath "$.location" == "+37.7749-122.4194"
 jsonpath "$.category" == "DEPOT"
 
 
@@ -73,7 +73,7 @@ jsonpath "$.category" == "DEPOT"
 #       | field    | value               |
 #       | id       | <milestone_id>      |
 #       | name     | "Main Depot"        |
-#       | location | "37.7749,-122.4194" |
+#       | location | "+37.7749-122.4194" |
 #       | category | "DEPOT"             |
 
 GET {{ host }}/milestones
@@ -88,7 +88,7 @@ header "sl-violations" not exists
 jsonpath "$" count > {{ list_count }}
 jsonpath "$[?(@.id == '{{ milestone_id }}')]" count == 1
 jsonpath "$[?(@.id == '{{ milestone_id }}')].name" nth 0 == "Main Depot"
-jsonpath "$[?(@.id == '{{ milestone_id }}')].location" nth 0 == "37.7749,-122.4194"
+jsonpath "$[?(@.id == '{{ milestone_id }}')].location" nth 0 == "+37.7749-122.4194"
 jsonpath "$[?(@.id == '{{ milestone_id }}')].category" nth 0 == "DEPOT"
 
 
@@ -102,7 +102,7 @@ jsonpath "$[?(@.id == '{{ milestone_id }}')].category" nth 0 == "DEPOT"
 #       | field    | value               |
 #       | id       | <milestone_id>      |
 #       | name     | "Main Depot"        |
-#       | location | "37.7749,-122.4194" |
+#       | location | "+37.7749-122.4194" |
 #       | category | "DEPOT"             |
 
 GET {{ host }}/milestones/{{ milestone_id }}
@@ -116,7 +116,7 @@ HTTP 200
 header "sl-violations" not exists
 jsonpath "$.id" == "{{ milestone_id }}"
 jsonpath "$.name" == "Main Depot"
-jsonpath "$.location" == "37.7749,-122.4194"
+jsonpath "$.location" == "+37.7749-122.4194"
 jsonpath "$.category" == "DEPOT"
 
 
@@ -133,7 +133,7 @@ jsonpath "$.category" == "DEPOT"
 #       | field    | value                     |
 #       | id       | <milestone_id>            |
 #       | name     | "Main Distribution Point" |
-#       | location | "37.7749,-122.4194"       |
+#       | location | "+37.7749-122.4194"       |
 #       | category | "DISTRIBUTION_CENTER"     |
 
 PATCH {{ host }}/milestones/{{ milestone_id }}
@@ -151,7 +151,7 @@ HTTP 200
 header "sl-violations" not exists
 jsonpath "$.id" == "{{ milestone_id }}"
 jsonpath "$.name" == "Main Distribution Point"
-jsonpath "$.location" == "37.7749,-122.4194"
+jsonpath "$.location" == "+37.7749-122.4194"
 jsonpath "$.category" == "DISTRIBUTION_CENTER"
 
 
@@ -163,7 +163,7 @@ jsonpath "$.category" == "DISTRIBUTION_CENTER"
 #       | field    | value                     |
 #       | id       | <milestone_id>            |
 #       | name     | "Main Distribution Point" |
-#       | location | "37.7749,-122.4194"       |
+#       | location | "+37.7749-122.4194"       |
 #       | category | "DISTRIBUTION_CENTER"     |
 
 GET {{ host }}/milestones
@@ -178,7 +178,7 @@ header "sl-violations" not exists
 jsonpath "$" count > {{ list_count }}
 jsonpath "$[?(@.id == '{{ milestone_id }}')]" count == 1
 jsonpath "$[?(@.id == '{{ milestone_id }}')].name" nth 0 == "Main Distribution Point"
-jsonpath "$[?(@.id == '{{ milestone_id }}')].location" nth 0 == "37.7749,-122.4194"
+jsonpath "$[?(@.id == '{{ milestone_id }}')].location" nth 0 == "+37.7749-122.4194"
 jsonpath "$[?(@.id == '{{ milestone_id }}')].category" nth 0 == "DISTRIBUTION_CENTER"
 
 
@@ -192,7 +192,7 @@ jsonpath "$[?(@.id == '{{ milestone_id }}')].category" nth 0 == "DISTRIBUTION_CE
 #       | field    | value                     |
 #       | id       | <milestone_id>            |
 #       | name     | "Main Distribution Point" |
-#       | location | "37.7749,-122.4194"       |
+#       | location | "+37.7749-122.4194"       |
 #       | category | "DISTRIBUTION_CENTER"     |
 
 GET {{ host }}/milestones/{{ milestone_id }}
@@ -206,7 +206,7 @@ HTTP 200
 header "sl-violations" not exists
 jsonpath "$.id" == "{{ milestone_id }}"
 jsonpath "$.name" == "Main Distribution Point"
-jsonpath "$.location" == "37.7749,-122.4194"
+jsonpath "$.location" == "+37.7749-122.4194"
 jsonpath "$.category" == "DISTRIBUTION_CENTER"
 
 
